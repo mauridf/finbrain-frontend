@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/config/env.ts","./src/lib/api/query-client.ts","./src/lib/formatters/currency.ts","./src/lib/formatters/date.ts","./src/lib/utils/cn.ts"],"version":"6.0.3"}
