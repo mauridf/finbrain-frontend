@@ -25,6 +25,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Separator } from '@/components/ui/separator'
 import { formatBRL } from '@/lib/formatters/currency'
 import { toast } from 'sonner'
+import { apiGet, apiPost } from '@/lib/api/http'
+import { isApiException } from '@/lib/api/api-exception'
 
 export function DesignSystemPage() {
   const [amount, setAmount] = useState(1234.5)
@@ -276,6 +278,50 @@ export function DesignSystemPage() {
           <Button variant="secondary" onClick={() => toast.error('E-mail já cadastrado.')}>Erro</Button>
           <Button variant="secondary" onClick={() => toast.warning('Vence em 3 dias.')}>Warning</Button>
           <Button variant="secondary" onClick={() => toast.info('Exportação em andamento.')}>Info</Button>
+        </div>
+      </section>
+
+      {/* ---------- Teste do cliente HTTP (temporário) ---------- */}
+      <section className="flex flex-col gap-3">
+        <h2 className="font-display text-lg font-semibold text-foreground">
+          Cliente HTTP (teste manual)
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              try {
+                // Endpoint público — não exige token
+                await apiGet('/accounts')
+                toast.success('GET /accounts respondeu')
+              } catch (e) {
+                if (isApiException(e)) {
+                  toast.error(`${e.code} (${e.status})`, { description: e.detail })
+                } else {
+                  toast.error(e instanceof Error ? e.message : 'Erro')
+                }
+              }
+            }}
+          >
+            Testar GET /accounts
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              try {
+                // Endpoint que exige auth → deve dar 401
+                await apiPost('/auth/login', { email: 'invalido@test.com', senha: 'x' })
+              } catch (e) {
+                if (isApiException(e)) {
+                  toast.error(`${e.code} (${e.status})`, { description: e.detail })
+                } else {
+                  toast.error(e instanceof Error ? e.message : 'Erro')
+                }
+              }
+            }}
+          >
+            Testar POST /auth/login (erro esperado)
+          </Button>
         </div>
       </section>
 

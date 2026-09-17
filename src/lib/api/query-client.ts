@@ -1,11 +1,14 @@
 import { QueryClient } from '@tanstack/react-query'
+import { isApiException } from './api-exception'
 
 /**
- * Defaults globais do TanStack Query alinhados ao backend FinBrain:
- * - Não refaz requisições 4xx (são erros do cliente, não transitórios).
- * - staleTime de 30s para a maioria dos recursos (dados mudam via eventos,
- *   e o dashboard já tem cache de 5 min no Redis do lado do servidor).
- * - Não refetch ao focar a janela (evita ruído de rede no cockpit).
+ * Defaults do TanStack Query alinhados ao backend FinBrain.
+ *
+ * Regras de retry:
+ *  - 4xx (erro do cliente): NÃO tentar novamente. São decisões do backend
+ *    (validação, autorização, limite de plano) — repetir não resolve.
+ *  - 5xx (erro de servidor): tentar até 2 vezes (rede instável, serviço reiniciando).
+ *  - Erro de rede (Error genérico): tentar 1 vez.
  */
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,8 +17,7 @@ export const queryClient = new QueryClient({
       gcTime: 5 * 60_000,
       refetchOnWindowFocus: false,
       retry: (failureCount, error) => {
-        const status = (error as { status?: number } | undefined)?.status
-        if (status && status >= 400 && status < 500) return false
+        if (isApiException(error) && error.isClientError) return false
         return failureCount < 2
       },
     },
