@@ -105,6 +105,21 @@
   /* -------- Sidebar cockpit -------- */
   --sidebar-width: 280px;
   --sidebar-width-tablet: 80px;
+
+    /* -------- Aliases exigidos pelo shadcn/ui -------- */
+  --color-primary-foreground: #ffffff;
+  --color-secondary-foreground: #0b1c30;
+  --color-muted: #eff4ff;
+  --color-muted-foreground: #64748b;
+  --color-accent: #0d9488;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #ba1a1a;
+  --color-destructive-foreground: #ffffff;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+  --color-card-foreground: #0f172a;
+
+    --radius: 0.75rem; /* 12px — shadcn usa como base para cards, inputs etc. */
 }
 
 /* =============================================================================
